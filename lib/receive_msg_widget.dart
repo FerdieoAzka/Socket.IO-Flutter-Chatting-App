@@ -20,7 +20,7 @@ class receivingMsgWidget extends StatelessWidget {
             ),
             child: Card(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              color: Colors.purpleAccent,
+              color: Color(0xFF0A0E21),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 child: Column(

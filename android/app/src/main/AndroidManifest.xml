@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.group_chat">
+    package="com.example.untitled">
    <application
-        android:label="group_chat"
+        android:label="Socket.IO Chat"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

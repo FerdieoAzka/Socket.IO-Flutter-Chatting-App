@@ -4,7 +4,7 @@ import 'msg.dart';
 import 'receive_msg_widget.dart';
 import 'sender_msg_widget.dart';
 import 'package:intl/intl.dart';
-
+import 'package:uuid/uuid.dart';
 
 class groupPage extends StatefulWidget {
   final String name;
@@ -20,7 +20,7 @@ class _groupPageState extends State<groupPage> {
   IO.Socket? socket;
   List<msgType> listMsg = [];
   TextEditingController msgController = TextEditingController();
-
+  var uuidMsg = Uuid();
   @override
   void initState() {
     super.initState();
@@ -39,15 +39,29 @@ class _groupPageState extends State<groupPage> {
         setState(() {
           if (msg["uuid"] != widget.uuid) {
             listMsg.add(msgType(
-                msg: msg["msg"], type: msg["type"], sender: msg["senderName"], time: msg["time"]));
+                msg: msg["msg"],
+                type: msg["type"],
+                sender: msg["senderName"],
+                time: msg["time"],
+                id: msg["uuidMsg"]));
           }
+        });
+      });
+        socket!.on("deleteMsg", (uuidMsg) {
+          setState(() {
+            listMsg.removeWhere((element) => element.id == uuidMsg['uuidMsg']);
         });
       });
     });
   }
 
-  void sendMsg(String msg, String senderName) {
-    msgType ownMsg = msgType(msg: msg, type: "ownMsg", sender: senderName, time:DateFormat.Hm().format(DateTime.now() ));
+  void sendMsg(String msg, String senderName, String uuidMsg) {
+    msgType ownMsg = msgType(
+        msg: msg,
+        type: "ownMsg",
+        sender: senderName,
+        time: DateFormat.Hm().format(DateTime.now()),
+        id: uuidMsg);
     listMsg.add(ownMsg);
     setState(() {
       listMsg;
@@ -57,26 +71,21 @@ class _groupPageState extends State<groupPage> {
       "msg": msg,
       "senderName": senderName,
       "uuid": widget.uuid,
-      "time":DateFormat.Hm().format(DateTime.now()),
+      "time": DateFormat.Hm().format(DateTime.now()),
+      "uuidMsg": uuidMsg,
     });
   }
 
-void toSend(){
-    socket!.emit('has been seen');
+  void unsendMsg(String uuidMsg) {
+    socket!.emit('unsendMsg', {
+      "uuidMsg": uuidMsg,
+    });
   }
-
-
-
-
-
-
-
-
 
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Socket.IO Chat"),
+          title: Text("Socket.IO Chat Room"),
           centerTitle: false,
           backgroundColor: Color(0xFF0A0E21),
         ),
@@ -87,16 +96,36 @@ void toSend(){
                   itemCount: listMsg.length,
                   itemBuilder: (context, index) {
                     if (listMsg[index].type == "ownMsg") {
-                      return
-                        sendingMsgWidget(
+                      return GestureDetector(
+                        onLongPress: () => showDialog(
+                          context: context,
+                          builder: (BuildContext) => AlertDialog(
+                            title: Text("Do you want to unsend this message?"),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Cancel",style: TextStyle(fontSize: 18),),),
+                              TextButton(
+                                  onPressed: () {
+                                    unsendMsg(listMsg[index].id);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Unsend",style: TextStyle(color:Colors.red,fontSize: 18),)),
+                            ],
+                          ),
+                        ),
+                        child: sendingMsgWidget(
                             msg: listMsg[index].msg,
                             sender: listMsg[index].sender,
-                            time: listMsg[index].time);
+                            time: listMsg[index].time),
+                      );
                     } else {
                       return receivingMsgWidget(
                           msg: listMsg[index].msg,
                           sender: listMsg[index].sender,
-                      time: listMsg[index].time);
+                          time: listMsg[index].time);
                     }
                   }),
             ),
@@ -108,7 +137,7 @@ void toSend(){
                     child: TextFormField(
                       controller: msgController,
                       decoration: InputDecoration(
-                        hintText: 'Start typing here ...',
+                        hintText: 'Start typing here ... ',
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 2,
@@ -120,7 +149,7 @@ void toSend(){
                           children: [
                             IconButton(
                               onPressed: () {
-                               msgController.clear();
+                                msgController.clear();
                               },
                               icon: Icon(
                                 Icons.delete_outline,
@@ -134,6 +163,7 @@ void toSend(){
                                   sendMsg(
                                     message,
                                     widget.name,
+                                    uuidMsg.v1(),
                                   );
                                   msgController.clear();
                                 }
