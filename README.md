@@ -1,16 +1,41 @@
-# group_chat
+# Socket.IO Multi-Client Room Chat
 
-A new Flutter project.
+A multi-client chatting application builds using the Flutter framework utilizing a Socket.IO connection. The application is made for the Computer System and Networking Lab Final Project.
 
-## Getting Started
+Group members:
 
-This project is a starting point for a Flutter application.
+🏋️ Ferdieo Azka Andhika - 21/472753/PA/20330
 
-A few resources to get you started if this is your first Flutter project:
+🙋‍♂️ William Hilmy Susatyo - 21/472585/PA/20308
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+🙋‍♂️ Abner Farrel J Hamonangan Simanjuntak - 21/477685/PA/20686
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The main objective of this project is to provide a platform for multiple people to chat in a single room with included features such as personal user names, unsending a message, and near-instant communication.
+
+The program needs the following framework and library to run:
+
+* Flutter
+
+* Node.JS
+
+* Socket.IO
+
+ ## Getting Started
+
+**How to run the application?**
+
+1. Clone the repoRun 
+2. Run the server from the /Socket_IO_Chat_Server using npm run dev command
+3. Run the app from the /lib/main.dart using the prevered IDE configured with Flutter and Dart
+
+**How to use the app?**
+
+1. Press the Start Group Chat button Input the desired username with at least 3 characters
+
+2. Type the message in the given text field and press send to send the message
+
+3. To use the unsend feature, long press on the sent message
+
+4. A pop-up will appear for unsend confirmation, press unsend to continue
+
+Happy Chatting!!!  🥳 🥳 💬 💬
